@@ -1,56 +1,25 @@
 const express = require("express");
-const { v4 } = require('uuid');
+const { v4: uuid } = require('uuid');
 
 const app = express();
 app.use(express.json());
 
-const courses = [];
+customers = [];
 
-app.get('/courses', (request, response) => {
-  return response.json(courses);
-});
+app.post('/account', (request, response) => {
+  const { cpf, name } = request.body;
+  const id = uuid();
 
-app.post('/courses', (request, response) => {
-  const { name, teacher } = request.body;
-  const course = {id: v4(), name, teacher };
-
-  courses.push(course);
-
-  return response.json(course);
-});
-
-app.put('/courses/:id', (request, response) => {
-  const { id } = request.params;
-  const { name, teacher } = request.body;
-
-  const indexCourse = courses.findIndex(course => course.id === id);
-
-  if (indexCourse < 0) {
-    return response.status(400).json('Course not found!');
-  }
-
-  const course = {
+  account = {
     id,
+    cpf,
     name,
-    teacher
-  }
+    statement: []
+  };
 
-  courses[indexCourse] = course;
-  return response.json(course);
-});
+  customers.push(account);
 
-app.delete('/courses/:id', (request, response) => {
-  const { id } = request.params;
-
-  const indexCourse = courses.findIndex(course => course.id === id);
-
-  if (indexCourse < 0) {
-    return response.status(400).json('Course not found');
-  }
-
-  courses.splice(indexCourse, 1);
-
-  return response.status(204).send();
+  return response.status(201).json(account)
 });
 
 app.listen(3334, () => {
