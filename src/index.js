@@ -8,10 +8,22 @@ customers = [];
 
 app.post('/account', (request, response) => {
   const { cpf, name } = request.body;
-  const id = uuid();
+
+  /*const indexCpf = customers.findIndex(account => account.cpf == cpf);
+  console.log(indexCpf);
+    
+  if (indexCpf >= 0) {
+    return response.status(400).json('CPF already registered!');
+  }*/
+
+  const customerAlreadyExists = customers.some(account => account.cpf === cpf);
+
+  if (customerAlreadyExists) {
+    return response.status(400).json({ error: 'CPF already registered!' });
+  }
 
   account = {
-    id,
+    id: uuid(),
     cpf,
     name,
     statement: []
