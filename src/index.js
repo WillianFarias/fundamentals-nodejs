@@ -21,6 +21,18 @@ function verifyExistAccountCPF(request, response, next) {
   return next();
 }
 
+function getBalance(statement) {
+  const balance = statement.reduce((acc, operation) => {
+    if (operation.type === 'credit') {
+      return acc + operation.amount;
+    } else {
+      return acc - operation.amount;
+    }
+  }, 0);
+
+  return balance;
+}
+
 app.post('/account', (request, response) => {
   const { cpf, name } = request.body;
 
@@ -65,6 +77,28 @@ app.post('/deposit', verifyExistAccountCPF, (request, response) => {
     amount,
     created_at: new Date(),
     type: 'credit'
+  }
+
+  account.statement.push(statementOperation);
+
+  return response.status(201).json(statementOperation);
+
+});
+
+app.post('/withdraw', verifyExistAccountCPF, (request, response) => {
+  const { amount } = request.body;
+  const { account } = request;
+
+  const balance = getBalance(account.statement);
+
+  if (balance < amount) {
+    return response.status(400).json({ error: 'Unsulfent balance!'});
+  }
+
+  const statementOperation = {
+    amount,
+    created_at: new Date(),
+    type: 'debit'
   }
 
   account.statement.push(statementOperation);
