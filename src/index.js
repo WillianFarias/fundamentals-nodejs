@@ -124,6 +124,14 @@ app.post('/withdraw', verifyExistAccountCPF, (request, response) => {
 
 });
 
+app.put('/account', verifyExistAccountCPF, (request, response) => {
+  const { name } = request.body;
+  const { account } = request;
+
+  account.name = name;
+  return response.status(201).json(account);
+});
+
 app.listen(3334, () => {
   console.log('Back-end started!')
 });
