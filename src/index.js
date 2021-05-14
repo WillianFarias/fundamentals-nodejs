@@ -67,6 +67,22 @@ app.get('/statement', verifyExistAccountCPF, (request, response) => {
   return response.status(200).json(account.statement);
 });
 
+app.get('/statement/date', verifyExistAccountCPF, (request, response) => {
+  const { account } = request;
+  const { date } = request.query;
+
+  console.log(date);
+
+  const dateFormat = new Date(date + " 00:00");
+
+  const statement = account.statement.filter((statement) => 
+  statement.created_at.toDateString() ===
+  new Date(dateFormat).toDateString()
+  );
+
+  return response.status(200).json(statement);
+});
+
 app.post('/deposit', verifyExistAccountCPF, (request, response) => {
   const { description, amount } = request.body;
 
@@ -96,6 +112,7 @@ app.post('/withdraw', verifyExistAccountCPF, (request, response) => {
   }
 
   const statementOperation = {
+    description: 'Saque',
     amount,
     created_at: new Date(),
     type: 'debit'
