@@ -132,6 +132,12 @@ app.put('/account', verifyExistAccountCPF, (request, response) => {
   return response.status(201).json(account);
 });
 
+app.get('/account', verifyExistAccountCPF, (request, response) => {
+  const { account } = request;
+
+  return response.status(200).json(account);
+});
+
 app.listen(3334, () => {
   console.log('Back-end started!')
 });
